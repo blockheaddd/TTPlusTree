@@ -155,7 +155,7 @@ class Node<T extends Comparable> {
 
     public void print()
     {
-        String str = "[ " + leftVal + ", " + rightVal + "]";
+        String str = " [ " + (leftVal==null?"  ":leftVal) + " | " + (rightVal==null?"  ":rightVal) + "] ";
         System.out.print(str);
     }
 }

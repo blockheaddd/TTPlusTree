@@ -595,7 +595,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
     }
 
     @Override
-    public void insert(T value) {
+    public boolean insert(T value) {
         if (root == null)
             root = Node.newTwoNode(value);
         else {
@@ -605,11 +605,11 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                     root = result;
                 }
             } catch (DuplicateException e) {
-                return;
+                return false;
             }
         }
         size ++;
-        return;
+        return true;
 
     }
 

@@ -111,11 +111,13 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
                 throw DUPLICATE;
             }
 
-            if (threeNode.isLeaf()) {
+            if (threeNode.isLeaf())
+            {
+                returnValue = splitLeafNode(threeNode, value);
 
-                returnValue = splitNode(threeNode, value);
-
-            } else {
+            }
+            else
+            {
                 if (leftComp < 0) {
                     Node<T> result = insertHelp(value, threeNode.leftChild());
                     if (result != null) {
@@ -230,7 +232,35 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
 
         Node<T> parent = Node.newTwoNode(middle);
         parent.setLeftChild(Node.newTwoNode(min));
+
+        //Change here to make 2-3+ tree
         parent.setRightChild(Node.newTwoNode(max));
+        return parent;
+    }
+
+    private Node<T> splitLeafNode(Node<T> threeNode, T value) {
+        T min;
+        T max;
+        T middle;
+        if (value.compareTo(threeNode.leftVal()) < 0) {
+            min = value;
+            middle = threeNode.leftVal();
+            max = threeNode.rightVal();
+        } else if (value.compareTo(threeNode.rightVal()) < 0) {
+            min = threeNode.leftVal();
+            middle = value;
+            max = threeNode.rightVal();
+        } else {
+            min = threeNode.leftVal();
+            max = value;
+            middle = threeNode.rightVal();
+        }
+
+        Node<T> parent = Node.newTwoNode(middle);
+        parent.setLeftChild(Node.newTwoNode(min));
+
+        //Change here to make 2-3+ tree
+        parent.setRightChild(Node.newThreeNode(middle, max));
         return parent;
     }
 
@@ -601,7 +631,7 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
     }
 
     @Override
-    public void insert(T value) {
+    public boolean insert(T value) {
         if (root == null)
             root = Node.newTwoNode(value);
         else {
@@ -612,11 +642,11 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
                 }
             } catch (DuplicateException e) {
                 System.out.println("Cannot enter duplicates.");
-                return;
+                return false;
             }
         }
         size ++;
-        return;
+        return true;
 
     }
 

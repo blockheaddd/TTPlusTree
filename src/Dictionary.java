@@ -13,7 +13,7 @@ public interface Dictionary<T> {
     /** Insert a record
      @param k The key for the record being inserted.
      */
-    public void insert(T k);
+    public boolean insert(T k);
 
     public void print();
 
