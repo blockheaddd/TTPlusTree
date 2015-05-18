@@ -1,8 +1,8 @@
 /**
- *  A class to represent the 2-3 Tree Data Structure
- *
- * Original Author: Sergejs Melderis (found online)
- * Modifications/Additions Made By: Gustavo Silva & Anil Jethani
+ *  A class to represent the 2-3+ Tree Data Structure
+ *  By: Gustavo Silva & Anil Jethani
+ *  Code Made By Modifying TwoThreeTree.java
+ *  Major changes have remarks
  */
 
 
@@ -121,7 +121,7 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
                 if (leftComp < 0) {
                     Node<T> result = insertHelp(value, threeNode.leftChild());
                     if (result != null) {
-                        returnValue = splitNode(threeNode, result.val());
+                        returnValue = splitInnerNode(threeNode, result.val());
                         returnValue.leftChild().setLeftChild(result.leftChild());
                         returnValue.leftChild().setRightChild(result.rightChild());
                         returnValue.rightChild().setLeftChild(threeNode.middleChild());
@@ -131,7 +131,7 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
                 } else if (rightComp < 0) {
                     Node<T> result = insertHelp(value, threeNode.middleChild());
                     if (result != null) {
-                        returnValue = splitNode(threeNode, result.val());
+                        returnValue = splitInnerNode(threeNode, result.val());
                         returnValue.leftChild().setLeftChild(threeNode.leftChild());
                         returnValue.leftChild().setRightChild(result.leftChild());
                         returnValue.rightChild().setLeftChild(result.rightChild());
@@ -141,7 +141,7 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
                 } else  {
                     Node<T> result = insertHelp(value, threeNode.rightChild());
                     if (result != null) {
-                        returnValue = splitNode(threeNode, result.val());
+                        returnValue = splitInnerNode(threeNode, result.val());
                         returnValue.leftChild().setLeftChild(threeNode.leftChild());
                         returnValue.leftChild().setRightChild(threeNode.middleChild());
                         returnValue.rightChild().setLeftChild(result.leftChild());
@@ -212,7 +212,18 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
     }
 
 
-    private Node<T> splitNode(Node<T> threeNode, T value) {
+    /**
+     * Turned splitNode function from original file
+     * into two separate functions:
+     *
+     * splitInnerNode: Same code as original, used to
+     * split an inner node( which acts only as a placeholder
+     * for 2-3+ trees)
+     *
+     * splitLeafNode: Modified code, used to split a leaf node
+     *
+     */
+    private Node<T> splitInnerNode(Node<T> threeNode, T value) {
         T min;
         T max;
         T middle;
@@ -265,56 +276,8 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
     }
 
 
-    public interface Function<T> {
-        public void apply(T t);
-    }
+    /* DICTIONARY FUNCTIONS */
 
-
-    /**
-     * Preorder search.
-     * Visit the node.
-     * Visit the left subtree
-     * Visit the middle subtree
-
-     */
-    public void preOrder(Node<T> node, Function<T> f) {
-        if (node.isThreeNode()) {
-            f.apply(node.leftVal());
-            f.apply(node.rightVal());
-        }
-        if (node.isLeaf())
-            return;
-
-
-        preOrder(node.leftChild(), f);
-        if (node.isThreeNode()) {
-            assert node.middleChild() != null;
-            preOrder(node.middleChild(), f);
-        }
-        preOrder(node.rightChild(), f);
-    }
-
-
-
-    public  void inorderSearch(Node<T> node, Function<T> func) {
-        if (node == null)
-            return;
-        inorderSearch(node.leftChild(), func);
-        if (node.isThreeNode()) {
-            Node<T> threeNode = node;
-            func.apply(threeNode.leftVal());
-            inorderSearch(threeNode.middleChild(), func);
-            func.apply(threeNode.rightVal());
-        } else {
-            func.apply(node.val());
-        }
-        inorderSearch(node.rightChild(), func);
-    }
-
-
-    /*
-     * DICTIONARY FUNCTIONS
-     */
     @Override
     public boolean remove(T value) {
         if (value == null)
@@ -653,23 +616,6 @@ public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
     @Override
     public int size() {
         return size;
-    }
-
-    @Override
-    public String toString() {
-        if (size == 0)
-            return "[]";
-        final StringBuilder sb = new StringBuilder("[");
-        inorderSearch(root, new Function<T>() {
-            public void apply(T t) {
-                sb.append(t);
-                sb.append(", ");
-            }
-        });
-        sb.deleteCharAt(sb.length() - 1);
-        sb.deleteCharAt(sb.length() - 1);
-        sb.append("]");
-        return sb.toString();
     }
 
     /**

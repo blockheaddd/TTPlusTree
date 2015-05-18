@@ -1,3 +1,10 @@
+/**
+ *  A class to represent a Node object
+ *
+ * Original Author: Sergejs Melderis (found online)
+ * Modifications/Additions Made By: Gustavo Silva & Anil Jethani
+ */
+
 class Node<T extends Comparable> {
     private Node<T> parent;
     private Node<T> leftChild;

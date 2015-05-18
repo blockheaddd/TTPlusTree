@@ -1,18 +1,44 @@
 /**
- *  A class to represent the 2-3 Tree Data Structure
+ *  NOTE!!!
+ *  This is not our code. This is code we found online
+ *  as a basis for our code. This is because the book code
+ *  was not working well. We included this file along with
+ *  our version (TwoThreePlusTree.java) made by modifying
+ *  this file so that you can see the changes we made and
+ *  the similarities and differences.
  *
  * Original Author: Sergejs Melderis (found online)
- * Modifications/Additions Made By: Gustavo Silva & Anil Jethani
  */
 
 
 import java.util.*;
-
-@SuppressWarnings("unchecked")
-public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
+public class TwoThreeTree<T extends Comparable> extends AbstractSet<T> implements SortedSet<T> {
 
     Node<T> root;
     int size = 0;
+
+    public boolean add(T value) {
+        if (root == null)
+            root = Node.newTwoNode(value);
+        else {
+            try {
+                Node<T> result = insert(value, root);
+                if (result != null) {
+                    root = result;
+                }
+            } catch (DuplicateException e) {
+                return false;
+            }
+        }
+        size ++;
+        return true;
+    }
+
+
+    public boolean contains(T value) {
+        return findNode(root, value) != null;
+    }
+
 
     private Node<T> findNode(Node<T> node, T value) {
         if (node == null) return null;
@@ -46,7 +72,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
     private static final DuplicateException DUPLICATE = new DuplicateException();
 
 
-    private Node<T> insertHelp(T value, Node<T> node) throws DuplicateException {
+    private Node<T> insert(T value, Node<T> node) throws DuplicateException {
         Node<T> returnValue = null;
         if (node.isTwoNode()) {
             int comp = value.compareTo(node.val());
@@ -62,7 +88,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                     root = thnode;
             } else {
                 if (comp < 0) {
-                    Node<T> result = insertHelp(value, node.leftChild());
+                    Node<T> result = insert(value, node.leftChild());
                     if (result != null) {
                         Node<T> threeNode = Node.newThreeNode(result.val(), node.val());
                         threeNode.setRightChild(node.rightChild());
@@ -76,7 +102,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                         unlinkNode(node);
                     }
                 } else if (comp > 0) {
-                    Node<T> result = insertHelp(value, node.rightChild());
+                    Node<T> result = insert(value, node.rightChild());
                     if (result != null) {
                         Node<T> threeNode = Node.newThreeNode(result.val(), node.val());
                         threeNode.setLeftChild(node.leftChild());
@@ -109,7 +135,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
 
             } else {
                 if (leftComp < 0) {
-                    Node<T> result = insertHelp(value, threeNode.leftChild());
+                    Node<T> result = insert(value, threeNode.leftChild());
                     if (result != null) {
                         returnValue = splitNode(threeNode, result.val());
                         returnValue.leftChild().setLeftChild(result.leftChild());
@@ -119,7 +145,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                         unlinkNode(threeNode);
                     }
                 } else if (rightComp < 0) {
-                    Node<T> result = insertHelp(value, threeNode.middleChild());
+                    Node<T> result = insert(value, threeNode.middleChild());
                     if (result != null) {
                         returnValue = splitNode(threeNode, result.val());
                         returnValue.leftChild().setLeftChild(threeNode.leftChild());
@@ -129,7 +155,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                         unlinkNode(threeNode);
                     }
                 } else  {
-                    Node<T> result = insertHelp(value, threeNode.rightChild());
+                    Node<T> result = insert(value, threeNode.rightChild());
                     if (result != null) {
                         returnValue = splitNode(threeNode, result.val());
                         returnValue.leftChild().setLeftChild(threeNode.leftChild());
@@ -145,141 +171,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
     }
 
 
-    private void unlinkNode(Node node) {
-        node.removeChildren();
-        node.setParent(null);
-    }
 
-
-    private Node<T> successor(Node<T> node, T value) {
-        if (node == null)
-            return null;
-
-        if (!node.isLeaf()) {
-            Node<T> p;
-            if (node.isThreeNode() && node.leftVal().equals(value)) {
-                p = node.middleChild();
-            } else {
-                p = node.rightChild();
-            }
-            while (p.leftChild() != null) {
-                p = p.leftChild();
-            }
-            return p;
-        } else {
-            Node<T> p = node.parent();
-            if (p == null) return null;
-
-            Node<T> ch = node;
-            while (p != null && ch == p.rightChild()) {
-                ch = p;
-                p = p.parent();
-            }
-            return p != null ? p : null;
-        }
-    }
-
-    private Node<T> predecessor(Node<T> node, T value) {
-        if (node == null)
-            return null;
-
-        Node<T> p;
-        if (!node.isLeaf()) {
-            if (node.isThreeNode() && node.rightVal().equals(value)) {
-                p = node.middleChild();
-            } else {
-                p = node.leftChild();
-            }
-
-            while (p.rightChild() != null) {
-                p = p.rightChild();
-            }
-            return p;
-        } else {
-            throw new UnsupportedOperationException("Implement predecessor parent is not terminal node");
-        }
-
-    }
-
-
-    private Node<T> splitNode(Node<T> threeNode, T value) {
-        T min;
-        T max;
-        T middle;
-        if (value.compareTo(threeNode.leftVal()) < 0) {
-            min = value;
-            middle = threeNode.leftVal();
-            max = threeNode.rightVal();
-        } else if (value.compareTo(threeNode.rightVal()) < 0) {
-            min = threeNode.leftVal();
-            middle = value;
-            max = threeNode.rightVal();
-        } else {
-            min = threeNode.leftVal();
-            max = value;
-            middle = threeNode.rightVal();
-        }
-
-        Node<T> parent = Node.newTwoNode(middle);
-        parent.setLeftChild(Node.newTwoNode(min));
-        parent.setRightChild(Node.newTwoNode(max));
-        return parent;
-    }
-
-
-    public interface Function<T> {
-        public void apply(T t);
-    }
-
-
-    /**
-     * Preorder search.
-     * Visit the node.
-     * Visit the left subtree
-     * Visit the middle subtree
-
-     */
-    public void preOrder(Node<T> node, Function<T> f) {
-        if (node.isThreeNode()) {
-            f.apply(node.leftVal());
-            f.apply(node.rightVal());
-        }
-        if (node.isLeaf())
-            return;
-
-
-        preOrder(node.leftChild(), f);
-        if (node.isThreeNode()) {
-            assert node.middleChild() != null;
-            preOrder(node.middleChild(), f);
-        }
-        preOrder(node.rightChild(), f);
-    }
-
-
-
-    public  void inorderSearch(Node<T> node, Function<T> func) {
-        if (node == null)
-            return;
-        inorderSearch(node.leftChild(), func);
-        if (node.isThreeNode()) {
-            Node<T> threeNode = node;
-            func.apply(threeNode.leftVal());
-            inorderSearch(threeNode.middleChild(), func);
-            func.apply(threeNode.rightVal());
-        } else {
-            func.apply(node.val());
-        }
-        inorderSearch(node.rightChild(), func);
-    }
-
-
-    /**
-     * Dictionary functions
-     * @param value
-     * @return
-     */
-    @Override
     public boolean remove(T value) {
         if (value == null)
             return false;
@@ -579,14 +471,257 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
         return true;
     }
 
-    @Override
-    public T removeAny() {
+
+    private void unlinkNode(Node node) {
+        node.removeChildren();
+        node.setParent(null);
+    }
+
+
+    private Node<T> successor(Node<T> node, T value) {
+        if (node == null)
+            return null;
+
+        if (!node.isLeaf()) {
+            Node<T> p;
+            if (node.isThreeNode() && node.leftVal().equals(value)) {
+                p = node.middleChild();
+            } else {
+                p = node.rightChild();
+            }
+            while (p.leftChild() != null) {
+                p = p.leftChild();
+            }
+            return p;
+        } else {
+            Node<T> p = node.parent();
+            if (p == null) return null;
+
+            Node<T> ch = node;
+            while (p != null && ch == p.rightChild()) {
+                ch = p;
+                p = p.parent();
+            }
+            return p != null ? p : null;
+        }
+    }
+
+    private Node<T> predecessor(Node<T> node, T value) {
+        if (node == null)
+            return null;
+
+        Node<T> p;
+        if (!node.isLeaf()) {
+            if (node.isThreeNode() && node.rightVal().equals(value)) {
+                p = node.middleChild();
+            } else {
+                p = node.leftChild();
+            }
+
+            while (p.rightChild() != null) {
+                p = p.rightChild();
+            }
+            return p;
+        } else {
+            throw new UnsupportedOperationException("Implement predecessor parent is not terminal node");
+        }
+
+    }
+
+
+    private Node<T> splitNode(Node<T> threeNode, T value) {
+        T min;
+        T max;
+        T middle;
+        if (value.compareTo(threeNode.leftVal()) < 0) {
+            min = value;
+            middle = threeNode.leftVal();
+            max = threeNode.rightVal();
+        } else if (value.compareTo(threeNode.rightVal()) < 0) {
+            min = threeNode.leftVal();
+            middle = value;
+            max = threeNode.rightVal();
+        } else {
+            min = threeNode.leftVal();
+            max = value;
+            middle = threeNode.rightVal();
+        }
+
+        Node<T> parent = Node.newTwoNode(middle);
+        parent.setLeftChild(Node.newTwoNode(min));
+        parent.setRightChild(Node.newTwoNode(max));
+        return parent;
+    }
+
+
+    public interface Function<T> {
+        public void apply(T t);
+    }
+
+
+    /**
+     * Preorder search.
+     * Visit the node.
+     * Visit the left subtree
+     * Visit the middle subtree
+
+     */
+    public void preOrder(Node<T> node, Function<T> f) {
+        if (node.isThreeNode()) {
+            f.apply(node.leftVal());
+            f.apply(node.rightVal());
+        }
+        if (node.isLeaf())
+            return;
+
+
+        preOrder(node.leftChild(), f);
+        if (node.isThreeNode()) {
+            assert node.middleChild() != null;
+            preOrder(node.middleChild(), f);
+        }
+        preOrder(node.rightChild(), f);
+    }
+
+
+
+    public  void inorderSearch(Node<T> node, Function<T> func) {
+        if (node == null)
+            return;
+        inorderSearch(node.leftChild(), func);
+        if (node.isThreeNode()) {
+            Node<T> threeNode = node;
+            func.apply(threeNode.leftVal());
+            inorderSearch(threeNode.middleChild(), func);
+            func.apply(threeNode.rightVal());
+        } else {
+            func.apply(node.val());
+        }
+        inorderSearch(node.rightChild(), func);
+    }
+
+
+    // Set operations.
+
+
+    /**
+     * The returning iterator does not support remove.
+     */
+    public Iterator<T> iterator() {
+
+        return new Iterator<T>() {
+            Node<T> nextNode;
+
+            // Stack to keep three nodes
+            Deque<Node<T>> threeNodes = new ArrayDeque<Node<T>>();
+            T next;
+            {
+                Node<T> node = root;
+                while(node != null && node.leftChild() != null) {
+                    node = node.leftChild();
+                }
+                nextNode = node;
+            }
+            public boolean hasNext() {
+                return next != null || nextNode != null;
+            }
+
+            public T next() {
+                T prev;
+                if (next != null) {
+                    prev = next;
+                    next = null;
+                    nextNode = successor(nextNode, prev);
+                    return prev;
+                }
+                if (nextNode.isThreeNode()) {
+                    if (nextNode.isLeaf()) {
+                        next = nextNode.rightVal();
+                        prev = nextNode.leftVal();
+                    } else {
+                        if (threeNodes.peekFirst() == nextNode) {
+                            threeNodes.pollFirst();
+                            prev = nextNode.rightVal();
+                            nextNode = successor(nextNode, prev);
+                        } else {
+                            prev = nextNode.leftVal();
+                            threeNodes.addFirst(nextNode);
+                            nextNode = successor(nextNode, prev);
+                        }
+                    }
+                } else {
+                    prev = nextNode.val();
+                    nextNode = successor(nextNode, prev);
+                }
+                return prev;
+            }
+
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+
+    }
+
+
+
+
+
+    public Comparator<? super T> comparator() {
         return null;
     }
 
+    public SortedSet<T> subSet(T fromElement, T toElement) {
+        throw new UnsupportedOperationException();
+    }
+
+    public SortedSet<T> headSet(T toElement) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    public SortedSet<T> tailSet(T fromElement) {
+        throw new UnsupportedOperationException();
+    }
+
+    public T first() {
+        Node<T> node = root;
+        while (node.leftChild() != null) {
+            node = node.leftChild();
+        }
+        return node.isThreeNode() ? node.leftVal() : node.val();
+    }
+
+    public T last() {
+        Node<T> node = root;
+        while (node.rightChild() != null) {
+            node = node.rightChild();
+        }
+        return node.isThreeNode() ? node.rightVal() : node.val();
+    }
+
+    public int size() {
+        return size;
+    }
+
+
     @Override
-    public T find(T k) {
-        return null;
+    public boolean contains(Object o) {
+        try {
+            return contains ((T) o);
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        try {
+            return remove((T) o);
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 
     @Override
@@ -594,29 +729,52 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
         root = null;
     }
 
+
     @Override
-    public boolean insert(T value) {
-        if (root == null)
-            root = Node.newTwoNode(value);
-        else {
-            try {
-                Node<T> result = insertHelp(value, root);
-                if (result != null) {
-                    root = result;
-                }
-            } catch (DuplicateException e) {
-                return false;
+    public Object[] toArray() {
+        final Object arr[] = new Object[size];
+        inorderSearch(root, new Function() {
+            int index = 0;
+
+            public void apply(Object t) {
+                arr[index++] = (T) t;
             }
-        }
-        size ++;
-        return true;
-
+        });
+        return arr;
     }
 
     @Override
-    public int size() {
-        return size;
+    public <T> T[] toArray(T[] a) {
+        T[] r = a.length >= size ? a :
+                (T[]) java.lang.reflect.Array
+                        .newInstance(a.getClass().getComponentType(), size);
+
+        return _toArray(r);
     }
+
+
+    public <T> T[]  _toArray(final T[] a) {
+        inorderSearch(root, new Function() {
+            int index = 0;
+
+            public void apply(Object t) {
+                a[index++] = (T) t;
+            }
+        });
+        return a;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        boolean removed = false;
+        for (Object o : c) {
+            removed |= remove(o);
+        }
+        return removed;
+    }
+
+
+
 
     @Override
     public String toString() {
@@ -634,58 +792,5 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
         sb.append("]");
         return sb.toString();
     }
-
-    /**
-     * Print and printLevel functions
-     * Created by: Gustavo Silva & Anil Jethani
-     * Print: Original function to call in order to print tree.
-     * printLevel: recursive helper function that prints the nodes
-     * by level for an accurate representation.
-     */
-    public void print()
-    {
-
-        root.print();
-        System.out.println();
-        ArrayList<Node> nodeList = new ArrayList<>(0);
-        nodeList.clear();
-        nodeList.add(root);
-
-        //Call recursive function to print each level
-        printLevel(nodeList);
-    }
-
-    private void printLevel(ArrayList<Node> nodeList)
-    {
-        if(nodeList.size() == 0)
-            return;
-        else {
-
-            int count = nodeList.size();
-            Node tempNode;
-            ArrayList<Node> tempNodeList = new ArrayList<>(0);
-
-            for (int i = 0; i < count; i++) {
-                tempNode = nodeList.get(i);
-
-                if (tempNode.leftChild() != null) {
-                    tempNode.leftChild().print();
-                    tempNodeList.add(tempNode.leftChild());
-                }
-                if (tempNode.middleChild() != null) {
-                    tempNode.middleChild().print();
-                    tempNodeList.add(tempNode.middleChild());
-                }
-                if (tempNode.rightChild() != null) {
-                    tempNode.rightChild().print();
-                    tempNodeList.add(tempNode.rightChild());
-                }
-            }
-
-            System.out.println();
-            printLevel(tempNodeList);
-        }
-    }
-
 
 }
