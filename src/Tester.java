@@ -6,14 +6,17 @@ public class Tester {
     public static void main(String args[])
     {
         TwoThreeTree<Integer> tree = new TwoThreeTree<>();
-        tree.add(2);
-        tree.add(3);
-        tree.add(4);
-        tree.add(5);
-        tree.add(6);
-        tree.add(0);
-        tree.add(15);
-        tree.add(16);
+        Dictionary<Integer> D1 = new TwoThreeTree<Integer>();
+        tree.insert(2);
+        tree.insert(3);
+        tree.insert(4);
+        tree.insert(5);
+        tree.insert(6);
+        tree.insert(0);
+        tree.insert(15);
+        tree.insert(16);
+        tree.print();
+        tree.remove(0);
         tree.print();
     }
 }

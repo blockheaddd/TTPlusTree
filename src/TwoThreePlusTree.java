@@ -9,7 +9,7 @@
 import java.util.*;
 
 @SuppressWarnings("unchecked")
-public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
+public class TwoThreePlusTree<T extends Comparable> implements Dictionary<T> {
 
     Node<T> root;
     int size = 0;
@@ -46,9 +46,12 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
     private static final DuplicateException DUPLICATE = new DuplicateException();
 
 
-    private Node<T> insertHelp(T value, Node<T> node) throws DuplicateException {
+    private Node<T> insertHelp(T value, Node<T> node) throws DuplicateException
+    {
         Node<T> returnValue = null;
-        if (node.isTwoNode()) {
+
+        if (node.isTwoNode())
+        {
             int comp = value.compareTo(node.val());
 
             if (node.isTerminal()) {
@@ -60,7 +63,9 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                     parent.replaceChild(node, thnode);
                 else
                     root = thnode;
-            } else {
+            }
+            else
+            {
                 if (comp < 0) {
                     Node<T> result = insertHelp(value, node.leftChild());
                     if (result != null) {
@@ -94,7 +99,9 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                 }
             }
 
-        } else { // three node
+        }
+        else
+        { // three node
             Node<T> threeNode = node;
 
             int leftComp = value.compareTo(threeNode.leftVal());
@@ -274,10 +281,8 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
     }
 
 
-    /**
-     * Dictionary functions
-     * @param value
-     * @return
+    /*
+     * DICTIONARY FUNCTIONS
      */
     @Override
     public boolean remove(T value) {
@@ -605,6 +610,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                     root = result;
                 }
             } catch (DuplicateException e) {
+                System.out.println("Cannot enter duplicates.");
                 return;
             }
         }
@@ -642,9 +648,9 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
      * printLevel: recursive helper function that prints the nodes
      * by level for an accurate representation.
      */
+    @Override
     public void print()
     {
-
         root.print();
         System.out.println();
         ArrayList<Node> nodeList = new ArrayList<>(0);
