@@ -80,7 +80,7 @@ class Node<T extends Comparable> {
     }
 
 
-    public boolean isTerminal() {
+    public boolean isLeaf() {
         return leftChild == null && rightChild == null;
     }
 

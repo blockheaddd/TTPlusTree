@@ -51,7 +51,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
         if (node.isTwoNode()) {
             int comp = value.compareTo(node.val());
 
-            if (node.isTerminal()) {
+            if (node.isLeaf()) {
                 if (comp == 0)
                     throw DUPLICATE;
                 Node<T> thnode = Node.newThreeNode(value, node.val());
@@ -103,7 +103,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
                 throw DUPLICATE;
             }
 
-            if (threeNode.isTerminal()) {
+            if (threeNode.isLeaf()) {
 
                 returnValue = splitNode(threeNode, value);
 
@@ -155,7 +155,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
         if (node == null)
             return null;
 
-        if (!node.isTerminal()) {
+        if (!node.isLeaf()) {
             Node<T> p;
             if (node.isThreeNode() && node.leftVal().equals(value)) {
                 p = node.middleChild();
@@ -184,7 +184,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
             return null;
 
         Node<T> p;
-        if (!node.isTerminal()) {
+        if (!node.isLeaf()) {
             if (node.isThreeNode() && node.rightVal().equals(value)) {
                 p = node.middleChild();
             } else {
@@ -244,7 +244,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
             f.apply(node.leftVal());
             f.apply(node.rightVal());
         }
-        if (node.isTerminal())
+        if (node.isLeaf())
             return;
 
 
@@ -291,7 +291,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
         HoleNode hole = null;
         Node<T> terminalNode;
         T holeValue;
-        if (node.isTerminal()) {
+        if (node.isLeaf()) {
             terminalNode = node;
             holeValue = value;
         } else {
@@ -316,7 +316,7 @@ public class TwoThreeTree<T extends Comparable> implements Dictionary<T> {
             }
         }
 
-        assert terminalNode.isTerminal();
+        assert terminalNode.isLeaf();
 
         if (terminalNode.isThreeNode()) {
             // Easy case. Replace 3-node by 2-node
