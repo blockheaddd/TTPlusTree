@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /**
  * Basic tester class to test the 2-3+
  * based Dictionary.
